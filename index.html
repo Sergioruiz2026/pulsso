@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PULSSO - Beta v3.2</title>
+<style>
+:root{--bg:#0b1320;--card:#111a2b;--text:#e8ecf2;--muted:#9aa3b2;--line:#1e293b;--brand:#3b82f6;--ok:#10b981;--brand2:#06b6d4}
+*{box-sizing:border-box}html,body{height:100%}body{margin:0;background:radial-gradient(1200px 600px at 50% -10%,#14203a 0%,#0b1320 60%);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+.wrap{width:100%;max-width:460px;margin:0 auto;min-height:100%;padding:24px 16px 32px}
+.center{text-align:center}
+.logo{width:80px;height:80px;margin:0 auto 16px;border-radius:20px;background:linear-gradient(135deg,#a7f3d0,#60a5fa,#fde68a);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(59,130,246,.35)}
+.logo svg{width:44px;height:44px}
+h1{font-size:32px;margin:8px 0 6px;font-weight:800;letter-spacing:.5px}
+.tag{color:var(--muted);font-size:15px;margin-bottom:20px}
+.card{background:rgba(17,26,43,.7);border:1px solid var(--line);border-radius:18px;padding:18px;backdrop-filter:blur(6px)}
+h2{font-size:18px;margin:0 0 10px;color:var(--brand2)}.muted{color:var(--muted);font-size:15px;line-height:1.5}
+.row{display:flex;gap:10px}.row>*{flex:1}.btn{appearance:none;border:1px solid var(--line);background:#0f172a;color:var(--text);padding:14px 16px;border-radius:14px;font-weight:700;cursor:pointer;width:100%;font-size:15px}
+.btn-primary{background:linear-gradient(135deg,var(--brand),var(--brand2));border:none;color:#07121f}.btn-ghost{background:transparent}.btn-ok{background:var(--ok);border:none;color:#062012}
+.list{display:flex;flex-direction:column;gap:12px}.opt{border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;gap:12px;align-items:flex-start;background:#0d1524}
+.opt input{margin-top:3px;width:18px;height:18px}.opt label{display:block;font-size:15px}.opt small{display:block;color:var(--muted);margin-top:4px;font-size:13px}
+.notice{font-size:13px;color:var(--muted);border-top:1px dashed var(--line);margin-top:16px;padding-top:14px;line-height:1.4}
+.screen{display:none}.screen.active{display:block}
+.footer{margin-top:20px;font-size:13px;color:var(--muted);text-align:center}.link{color:var(--brand2);text-decoration:none}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px}.chip{padding:8px 12px;border:1px solid var(--line);border-radius:999px;font-size:13px;background:#0d1524}
+textarea{width:100%;background:#0d1524;border:1px solid var(--line);color:var(--text);border-radius:12px;padding:12px;font-family:inherit;font-size:15px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;padding:16px;z-index:100}
+.modal.box{background:var(--card);border:1px solid var(--line);border-radius:18px;max-width:520px;width:100%;padding:20px}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt20{margin-top:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- BIENVENIDA - FORMATO ANTERIOR -->
+  <section id="bienvenida" class="screen active">
+    <div class="center">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 21s-6-4.35-9-8.5C1 9 3 5 7 5c2.5 0 3.5 1.5 5 3 1.5-1.5 2.5-3 5-3 4 0 6 4 7.5C18 16.65 12 21 12 21z" fill="#0b1320" opacity=".9"/></svg>
+      </div>
+      <h1>PULSSO</h1>
+      <div class="tag">Apoyo entre amigos, sin vigilar</div>
+    </div>
+    
+    <div class="card mt20">
+      <h2>👋 Hola, ¿cómo funciona?</h2>
+      <p class="muted">PULSSO es como ese amigo que te cacha cuando andas bajoneado.</p>
+      <p class="muted mt12">Por ejemplo: si pasas de mandar 20 WhatsApp al día a mandar 2 por una semana, PULSSO te pregunta en privado: <strong>"Oye, ¿todo bien? Te noto más callado"</strong></p>
+      <p class="muted mt12">Solo tú lo ves. Nadie más se entera.</p>
+    </div>
+
+    <div class="card mt16">
+      <h2>🔒 Tu decides todo</h2>
+      <p class="muted">Si dices "me serviría apoyo", tú eliges a quién avisar y qué mensaje enviar. <strong>PULSSO nunca avisa sin tu OK.</strong></p>
+      <div class="chips"><span class="chip">Privado</span><span class="chip">Con tu permiso</span><span class="chip">Sin diagnósticos</span></div>
+      <div class="row mt16"><button class="btn btn-primary" onclick="showScreen('encuesta')">Comenzar</button><button class="btn btn-ghost" onclick="showScreen('info')">Ver ejemplo</button></div>
+      <div class="notice">Crisis o riesgo inmediato: llama <a class="link" href="tel:*4141">*4141</a> Salud Responde o <a class="link" href="tel:6003607777">600 360 7777</a> Línea Prevención Suicidio.</div>
+    </div>
+    <div class="footer">PULSSO © 2026 — <a class="link" href="#" onclick="showModal('legal')">Términos</a> · <a class="link" href="#" onclick="showModal('priv')">Privacidad</a></div>
+  </section>
+
+  <!-- ENCUESTA -->
+  <section id="encuesta" class="screen">
+    <div class="card">
+      <h2>Antes de partir</h2>
+      <p class="muted">Esto nos ayuda a que PULSSO hable tu idioma. Solo tú ves esto.</p>
+      <div class="mt16">
+        <label class="muted">¿Qué edad tienes?</label>
+        <div class="row mt8"><button class="btn btn-ghost" onclick="selEdad(this)">13–17</button><button class="btn btn-ghost" onclick="selEdad(this)">18–24</button></div>
+        <div class="row mt8"><button class="btn btn-ghost" onclick="selEdad(this)">25–34</button><button class="btn btn-ghost" onclick="selEdad(this)">35+</button></div>
+      </div>
+      <div class="mt16">
+        <label class="muted">Si un día andas bajón, ¿qué te serviría más?</label>
+        <div class="list mt8">
+          <div class="opt"><input type="radio" name="estilo" id="est1"><label for="est1">Que me hablen piola, sin sermón <small>“Oye, ¿un café?”</small></label></div>
+          <div class="opt"><input type="radio" name="estilo" id="est2"><label for="est2">Que me inviten a hacer algo <small>“Vamos a caminar”</small></label></div>
+          <div class="opt"><input type="radio" name="estilo" id="est3"><label for="est3">Que me recuerden que importo <small>“Te quiero, cuentas conmigo”</small></label></div>
+        </div>
+      <div class="row mt20"><button class="btn btn-ghost" onclick="showScreen('bienvenida')">Atrás</button><button class="btn btn-primary" onclick="showScreen('home')">Listo</button></div>
+    </div>
+  </section>
+
+  <!-- HOME -->
+  <section id="home" class="screen">
+    <div class="card center">
+      <h2>Todo en orden ✅</h2>
+      <p class="muted">No hay check-ins pendientes. Si PULSSO nota que te aíslas varios días, te preguntará en privado. Tú decides si avisar o no.</p>
+      <div class="row mt20"><button class="btn btn-ghost" onclick="showScreen('bienvenida')">Inicio</button><button class="btn btn-primary" onclick="showScreen('checkin')">Simular check-in</button></div>
+      <div class="notice">PULSSO NO es línea de emergencia. Si hay riesgo inmediato: <a class="link" href="tel:*4141">*4141</a>.</div>
+    </div>
+  </section>
+
+  <!-- CHECKIN -->
+  <section id="checkin" class="screen">
+    <div class="card">
+      <h2>Chequeo privado</h2>
+      <p class="muted">Oye, te notamos más callado estos días. ¿Cómo andas?</p>
+      <div class="list mt16">
+        <div class="opt"><input type="radio" name="estado" id="e1"><label for="e1">Estoy bien, gracias <small>No avisamos a nadie</small></label></div>
+        <div class="opt"><input type="radio" name="estado" id="e2"><label for="e2">Más o menos <small>Podemos dejarlo en pausa 48h</small></label></div>
+        <div class="opt"><input type="radio" name="estado" id="e3"><label for="e3">Me serviría que me hablen <small>Elegirás a quién y qué decir</small></label></div>
+      </div>
+      <div class="row mt20"><button class="btn btn-ghost" onclick="showScreen('home')">Ahora no</button><button class="btn btn-primary" onclick="decidirCheckin()">Continuar</button></div>
+      <div class="notice">Si hay riesgo inmediato: <a class="link" href="tel:*4141">*4141</a> · <a class="link" href="tel:6003607777">600 360 7777</a>.</div>
+    </div>
+  </section>
+
+  <!-- ELEGIR GENTE -->
+  <section id="gente" class="screen">
+  <div class="card">
+    <h2>Arma tu círculo de confianza</h2>
+    <p class="muted">Elige a quién avisamos primero. Si no responde en 24h, te preguntaremos si avisar al siguiente.</p>
+    
+    <div class="list mt16">
+      <div class="opt"><input type="radio" name="principal" id="p-mama" checked><label for="p-mama"><strong>Contacto Principal:</strong> Mamá</label></div>
+      <div class="opt"><input type="radio" name="principal" id="p-papa"><label for="p-papa"><strong>Contacto Principal:</strong> Papá</label></div>
+      <div class="opt"><input type="radio" name="principal" id="p-pareja"><label for="p-pareja"><strong>Contacto Principal:</strong> Pareja</label></div>
+      <div class="opt"><input type="radio" name="principal" id="p-amigo"><label for="p-amigo"><strong>Contacto Principal:</strong> Amigo/a</label></div>
+    </div>
+
+    <div class="mt16">
+      <label class="muted">Contactos de respaldo -opcional-</label>
+      <div class="list mt8">
+        <div class="opt"><input type="checkbox" id="r-papa"><label for="r-papa">Papá como respaldo</label></div>
+        <div class="opt"><input type="checkbox" id="r-pareja"><label for="r-pareja">Pareja como respaldo</label></div>
+        <div class="opt"><input type="checkbox" id="r-amigo"><label for="r-amigo">Amigo/a como respaldo</label></div>
+      </div>
+    </div>
+
+    <div class="row mt20"><button class="btn btn-ghost" onclick="showScreen('checkin')">Atrás</button><button class="btn btn-primary" onclick="showScreen('mensaje')">Siguiente</button></div>
+    <div class="notice">Solo contactaremos a 1 persona a la vez. Si no hay respuesta en 24h, te preguntaremos antes de pasar al siguiente. Nunca enviamos en masa.</div>
+  </div>
+</section>
+
+
+  <!-- MENSAJE + WHATSAPP -->
+  <section id="mensaje" class="screen">
+    <div class="card">
+      <h2>Elige el mensaje</h2>
+      <p class="muted">Esto es lo que verán. Sin diagnósticos, sin alarmas. Solo ideas concretas.</p>
+      <div class="list mt16">
+        <div class="opt"><input type="radio" name="msg" id="m1" checked><label for="m1"><strong>Opción suave</strong><small>“Oye, hace días que no sé de [nombre]. ¿Podrías invitarle un café o mandarle un mensaje? Le haría bien.”</small></label></div>
+        <div class="opt"><input type="radio" name="msg" id="m2"><label for="m2"><strong>Opción directa</strong><small>“[nombre] anda bajoneado. ¿Puedes hablarle hoy? No está solo/a.”</small></label></div>
+        <div class="opt"><input type="radio" name="msg" id="m3"><label for="m3"><strong>Opción acción</strong><small>“¿Te tinca invitar a [nombre] a caminar o a comer algo esta semana?”</small></label></div>
+      </div>
+      <div class="mt16"><label class="muted">Editar mensaje -opcional-</label><textarea id="msgCustom" rows="3" placeholder="Puedes personalizarlo..."></textarea></div>
+      <div class="row mt20"><button class="btn btn-ghost" onclick="showScreen('gente')">Atrás</button><button class="btn btn-ok" onclick="enviarPorWhatsApp()">Enviar por WhatsApp</button></div>
+      <div class="notice">Al tocar "Enviar por WhatsApp" se abrirá tu WhatsApp con el mensaje listo. <strong>Tú decides si enviar.</strong> PULSSO no envía nada sin que lo veas.</div>
+    </div>
+  </section>
+
+  <!-- CONFIRMADO -->
+  <section id="confirmado" class="screen">
+    <div class="card center">
+      <h2>Listo ✅</h2>
+      <p class="muted">Se abrió WhatsApp con el mensaje. Cuando lo envíes, tu gente sabrá cómo apañarte.</p>
+      <p class="muted mt16">Recuerda: PULSSO no es terapia. Si necesitas hablar ahora: <a class="link" href="tel:*4141">*4141</a> o <a class="link" href="tel:6003607777">600 360 7777</a>.</p>
+      <div class="row mt20"><button class="btn btn-primary" onclick="showScreen('home')">Volver al inicio</button></div>
+    </div>
+  </section>
+
+  <!-- INFO -->
+  <section id="info" class="screen">
+    <div class="card">
+      <h2>¿Cómo funciona PULSSO?</h2>
+      <div class="list mt16">
+        <div class="opt"><div><strong>1. Observa patrones</strong><small>Si te aíslas varios días, PULSSO lo nota. No lee tus mensajes.</small></div></div>
+        <div class="opt"><div><strong>2. Te pregunta en privado</strong><small>"¿Todo bien?" Solo tú ves esto.</small></div></div>
+        <div class="opt"><div><strong>3. Tú decides</strong><small>Si dices "me serviría apoyo", eliges a quién avisar.</small></div></div>
+        <div class="opt"><div><strong>4. Tu red actúa</strong><small>Les llega una idea concreta: "invítale un café". No es alarma.</small></div></div>
+      </div>
+      <div class="row mt20"><button class="btn btn-primary" onclick="showScreen('bienvenida')">Entendido</button></div>
+    </div>
+  </section>
+
+</div>
+
+<!-- MODALES -->
+<div id="modal" class="modal"><div class="box"><h3 id="modalTitle">Legal</h3><div id="modalBody" class="muted mt12" style="max-height:50vh;overflow:auto"></div><div class="row mt20"><button class="btn btn-primary" onclick="closeModal()">Cerrar</button></div></div></div>
+
+<script>
+let edadSel = null;
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+function selEdad(btn){edadSel = btn.textContent;document.querySelectorAll('#encuesta.btn-ghost').forEach(b=>b.style.borderColor='var(--line)');btn.style.borderColor='var(--brand)'}
+function decidirCheckin(){
+  const e1 = document.getElementById('e1').checked;
+  const e2 = document.getElementById('e2').checked;
+  const e3 = document.getElementById('e3').checked;
+  if(e1){alert('Perfecto. No avisaremos a nadie. Cuídate.');showScreen('home')}
+  else if(e2){alert('Lo dejamos en pausa 48h. Si quieres hablar: *4141');showScreen('home')}
+  else if(e3){showScreen('gente')}
+  else{alert('Elige una opción')}
+}
+
+function enviarPorWhatsApp(){
+  // 1. Detectar principal
+  let principal = "";
+  if(document.getElementById('p-mama').checked) principal = "Mamá";
+  if(document.getElementById('p-papa').checked) principal = "Papá";
+  if(document.getElementById('p-pareja').checked) principal = "Pareja";
+  if(document.getElementById('p-amigo').checked) principal = "Amigo/a";
+
+  // 2. Guardar respaldos para futuro -en app real-
+  const respaldos = [];
+  if(document.getElementById('r-papa').checked && principal !== "Papá") respaldos.push("Papá");
+  if(document.getElementById('r-pareja').checked && principal !== "Pareja") respaldos.push("Pareja");
+  if(document.getElementById('r-amigo').checked && principal !== "Amigo/a") respaldos.push("Amigo/a");
+
+  // 3. Mensaje
+  let mensaje = "Oye, hace días que no sé de [nombre]. ¿Podrías invitarle un café o mandarle un mensaje? Le haría bien.";
+  if(document.getElementById('m2')?.checked) mensaje = "[nombre] anda bajoneado. ¿Puedes hablarle hoy? No está solo/a.";
+  if(document.getElementById('m3')?.checked) mensaje = "¿Te tinca invitar a [nombre] a caminar o a comer algo esta semana?";
+  
+  const custom = document.getElementById('msgCustom').value.trim();
+  if(custom) mensaje = custom;
+
+  const texto = encodeURIComponent(mensaje.replace('[nombre]', 'tu familiar/amigo'));
+  
+  // 4. Abrir WhatsApp solo para el principal
+  const whatsappUrl = `https://wa.me/?text=${texto}`;
+  window.open(whatsappUrl, '_blank');
+  
+  // 5. Para demo CREA: simular que guardamos respaldos
+  if(respaldos.length > 0){
+    localStorage.setItem('pulsso_respaldos', JSON.stringify(respaldos));
+    alert('Se abrió WhatsApp para ' + principal + '. Si no responde en 24h, la app real te preguntaría si avisar a: ' + respaldos.join(', '));
+  }
+  
+  showScreen('confirmado');
+}
+
+function showModal(tipo){
+  const t = document.getElementById('modalTitle');
+  const b = document.getElementById('modalBody');
+  if(tipo==='legal'){
+    t.textContent='Términos y Condiciones';
+    b.innerHTML=`<p><strong>1. Qué es PULSSO:</strong> App de apoyo entre pares. NO es terapia, diagnóstico ni línea de emergencia.</p>
+    <p><strong>2. Tu responsabilidad:</strong> Si hay riesgo vital, llama *4141. PULSSO no reemplaza ayuda profesional.</p>
+    <p><strong>3. Consentimiento:</strong> Nada se envía sin tu aprobación explícita en 2 pasos.</p>
+    <p><strong>4. WhatsApp:</strong> Al tocar "Enviar", se abre tu WhatsApp. PULSSO no ve ni guarda a quién le escribes.</p>
+    <p><strong>5. Edad:</strong> 13+ con consentimiento parental. Recomendado 18+.</p>`
+  }else{
+    t.textContent='Política de Privacidad';
+    b.innerHTML=`<p><strong>1. Datos mínimos:</strong> Solo guardamos edad y preferencias. No accedemos a contactos, ubicación ni mensajes.</p>
+    <p><strong>2. On-device:</strong> La detección ocurre en tu celular. No subimos tus datos.</p>
+    <p><strong>3. WhatsApp:</strong> El envío es desde tu WhatsApp. PULSSO no tiene acceso a tus chats.</p>
+    <p><strong>4. Tus derechos:</strong> Puedes borrar tu cuenta y datos cuando quieras según Ley 19.628.</p>
+    <p><strong>5. Contacto:</strong> pulssoapp@zohomail.com</p>`
+  }
+  document.getElementById('modal').style.display='flex';
+}
+function closeModal(){document.getElementById('modal').style.display='none'}
+</script>
+</body>
+</html>
