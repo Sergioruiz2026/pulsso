@@ -10,7 +10,7 @@
 .wrap{width:100%;max-width:460px;margin:0 auto;min-height:100%;padding:24px 16px 32px}
 .center{text-align:center}
 .logo{width:80px;height:80px;margin:0 auto 16px;border-radius:20px;background:linear-gradient(135deg,#a7f3d0,#60a5fa,#fde68a);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(59,130,246,.35)}
-.logo svg{width:44px;height:44px}
+.logo svg,.logo img{width:80px;height:80px;object-fit:contain}
 h1{font-size:32px;margin:8px 0 6px;font-weight:800;letter-spacing:.5px}
 .tag{color:var(--muted);font-size:15px;margin-bottom:20px}
 .card{background:rgba(17,26,43,.7);border:1px solid var(--line);border-radius:18px;padding:18px;backdrop-filter:blur(6px)}
@@ -51,9 +51,7 @@ textarea{width:100%;background:#0d1524;border:1px solid var(--line);color:var(--
   <section id="bienvenida" class="screen active">
     <div class="center">
       <div class="logo">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="12" cy="12" r="10" fill="#0b1320" opacity="0.9" />
-        </svg>
+        <img src="pulsso.jpeg" alt="PULSSO logo" />
       </div>
       <h1>PULSSO</h1>
       <div class="tag">Apoyo entre amigos, sin vigilar</div>
@@ -107,7 +105,9 @@ textarea{width:100%;background:#0d1524;border:1px solid var(--line);color:var(--
       <p class="muted">Oye, te notamos más callado estos días. ¿Cómo andas?</p>
       <div class="list mt16">
         <div class="opt"><input type="radio" name="estado" id="e1"><label for="e1">Estoy bien, gracias <small>No avisamos a nadie</small></label></div>
+        <p class="muted" style="margin:12px 0">Si respondes "Estoy bien", no se avisará a nadie. PULSSO seguirá monitoreando tu actividad y te preguntará de nuevo si detecta cambios.</p>
         <div class="opt"><input type="radio" name="estado" id="e2"><label for="e2">Más o menos <small>Podemos dejarlo en pausa 48h</small></label></div>
+        <p class="muted" style="margin:12px 0">Si eliges "Más o menos", pausamos los check-ins por 48h. PULSSO te preguntará de nuevo después de ese tiempo para ver cómo sigues.</p>
         <div class="opt"><input type="radio" name="estado" id="e3"><label for="e3">Me serviría que me hablen <small>Elegirás a quién y qué decir</small></label></div>
       </div>
       <div class="row mt20"><button class="btn btn-ghost" onclick="showScreen('home')">Ahora no</button><button class="btn btn-primary" onclick="decidirCheckin()">Continuar</button></div>
