@@ -10,7 +10,7 @@
 .wrap{width:100%;max-width:460px;margin:0 auto;min-height:100%;padding:24px 16px 32px}
 .center{text-align:center}
 .logo{width:80px;height:80px;margin:0 auto 16px;border-radius:20px;background:linear-gradient(135deg,#a7f3d0,#60a5fa,#fde68a);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(59,130,246,.35)}
-.logo svg,.logo img{width:65px;height:65px;object-fit:contain}
+.logo svg,.logo img{max-width:72px;max-height:72px;width:auto;height:auto;object-fit:contain}
 h1{font-size:32px;margin:8px 0 6px;font-weight:800;letter-spacing:.5px}
 .tag{color:var(--muted);font-size:15px;margin-bottom:20px}
 .card{background:rgba(17,26,43,.7);border:1px solid var(--line);border-radius:18px;padding:18px;backdrop-filter:blur(6px)}
@@ -51,7 +51,7 @@ textarea{width:100%;background:#0d1524;border:1px solid var(--line);color:var(--
   <section id="bienvenida" class="screen active">
     <div class="center">
       <div class="logo">
-        <img src="pulsso.jpeg" alt="PULSSO logo" />
+        <img src="./pulsso.jpeg" alt="PULSSO logo" onerror="this.style.display='none';" />
       </div>
       <h1>PULSSO</h1>
       <div class="tag">Apoyo entre amigos, sin vigilar</div>
