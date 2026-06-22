@@ -26,6 +26,21 @@ h2{font-size:18px;margin:0 0 10px;color:var(--brand2)}.muted{color:var(--muted);
 textarea{width:100%;background:#0d1524;border:1px solid var(--line);color:var(--text);border-radius:12px;padding:12px;font-family:inherit;font-size:15px}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;padding:16px;z-index:100}
 .modal.box{background:var(--card);border:1px solid var(--line);border-radius:18px;max-width:520px;width:100%;padding:20px}
+.simulation-modal{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;padding:16px;z-index:101;overflow-y:auto}
+.simulation-modal.active{display:flex}
+.simulation-box{background:var(--card);border:1px solid var(--line);border-radius:18px;max-width:420px;width:100%;padding:24px;max-height:85vh;overflow-y:auto;position:relative}
+.sim-section{display:none}.sim-section.active{display:block}
+.sim-close-btn{position:absolute;top:12px;right:12px;width:36px;height:36px;border:none;background:transparent;color:var(--text);font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.sim-close-btn:hover{opacity:.7}
+.sim-step{display:none}.sim-step.active{display:block}
+.sim-step h3{margin:0 0 12px;font-size:16px;color:var(--brand2)}
+.sim-step p{margin:8px 0;font-size:14px}
+.sim-badge{display:inline-block;background:rgba(239,68,68,.2);color:#ef4444;padding:4px 8px;border-radius:6px;font-size:12px;font-weight:600}
+.sim-step button{width:100%;margin-top:8px}
+.sim-step button:last-child{margin-bottom:0}
+.demo-highlight{border-color:#60a5fa;box-shadow:0 0 0 2px rgba(96,165,250,.25);background:linear-gradient(135deg,rgba(59,130,246,.95),rgba(6,182,212,.95));color:#fff}
+.demo-highlight:hover{opacity:.95}
+.sim-legal{font-size:11px;color:var(--muted);margin-top:20px;padding-top:16px;border-top:1px dashed var(--line);line-height:1.4}
 .mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt20{margin-top:20px}
 </style>
 </head>
@@ -56,7 +71,7 @@ textarea{width:100%;background:#0d1524;border:1px solid var(--line);color:var(--
       <p class="muted">Si dices "me serviría apoyo", tú eliges a quién avisar y qué mensaje enviar. <strong>PULSSO nunca avisa sin tu OK.</strong></p>
       <div class="chips"><span class="chip">Privado</span><span class="chip">Con tu permiso</span><span class="chip">Sin diagnósticos</span></div>
       <div class="row mt16"><button class="btn btn-primary" onclick="showScreen('encuesta')">Comenzar</button><button class="btn btn-ghost" onclick="showScreen('info')">Ver ejemplo</button></div>
-      <div class="notice">Crisis o riesgo inmediato: llama <a class="link" href="tel:*4141">*4141</a> Salud Responde o <a class="link" href="tel:6003607777">600 360 7777</a> Línea Prevención Suicidio.</div>
+      <div class="notice">Crisis o riesgo inmediato: llama <a class="link" href="tel:*4141" onclick="return callEmergency('*4141','*4141')">*4141</a> Salud Responde o <a class="link" href="tel:6003607777" onclick="return callEmergency('6003607777','600 360 7777')">600 360 7777</a> Línea Prevención Suicidio.</div>
     </div>
     <div class="footer">PULSSO © 2026 — <a class="link" href="#" onclick="showModal('legal')">Términos</a> · <a class="link" href="#" onclick="showModal('priv')">Privacidad</a></div>
   </section>
@@ -80,8 +95,8 @@ textarea{width:100%;background:#0d1524;border:1px solid var(--line);color:var(--
     <div class="card center">
       <h2>Todo en orden ✅</h2>
       <p class="muted">No hay check-ins pendientes. Si PULSSO nota que te aíslas varios días, te preguntará en privado. Tú decides si avisar o no.</p>
-      <div class="row mt20"><button class="btn btn-ghost" onclick="showScreen('bienvenida')">Inicio</button><button class="btn btn-primary" onclick="showScreen('checkin')">Simular check-in</button></div>
-      <div class="notice">PULSSO NO es línea de emergencia. Si hay riesgo inmediato: <a class="link" href="tel:*4141">*4141</a>.</div>
+      <div class="row mt20"><button class="btn btn-ghost" onclick="showScreen('bienvenida')">Inicio</button><button class="btn btn-primary" onclick="openSimulationModal()">Simular check-in</button></div>
+      <div class="notice">PULSSO NO es línea de emergencia. Si hay riesgo inmediato: <a class="link" href="tel:*4141" onclick="return callEmergency('*4141','*4141')">*4141</a>.</div>
     </div>
   </section>
 
@@ -96,7 +111,7 @@ textarea{width:100%;background:#0d1524;border:1px solid var(--line);color:var(--
         <div class="opt"><input type="radio" name="estado" id="e3"><label for="e3">Me serviría que me hablen <small>Elegirás a quién y qué decir</small></label></div>
       </div>
       <div class="row mt20"><button class="btn btn-ghost" onclick="showScreen('home')">Ahora no</button><button class="btn btn-primary" onclick="decidirCheckin()">Continuar</button></div>
-      <div class="notice">Si hay riesgo inmediato: <a class="link" href="tel:*4141">*4141</a> · <a class="link" href="tel:6003607777">600 360 7777</a>.</div>
+      <div class="notice">Si hay riesgo inmediato: <a class="link" href="tel:*4141" onclick="return callEmergency('*4141','*4141')">*4141</a> · <a class="link" href="tel:6003607777" onclick="return callEmergency('6003607777','600 360 7777')">600 360 7777</a>.</div>
     </div>
   </section>
 
@@ -149,7 +164,7 @@ textarea{width:100%;background:#0d1524;border:1px solid var(--line);color:var(--
     <div class="card center">
       <h2>Listo ✅</h2>
       <p class="muted">Se abrió WhatsApp con el mensaje. Cuando lo envíes, tu gente sabrá cómo apañarte.</p>
-      <p class="muted mt16">Recuerda: PULSSO no es terapia. Si necesitas hablar ahora: <a class="link" href="tel:*4141">*4141</a> o <a class="link" href="tel:6003607777">600 360 7777</a>.</p>
+      <p class="muted mt16">Recuerda: PULSSO no es terapia. Si necesitas hablar ahora: <a class="link" href="tel:*4141" onclick="return callEmergency('*4141','*4141')">*4141</a> o <a class="link" href="tel:6003607777" onclick="return callEmergency('6003607777','600 360 7777')">600 360 7777</a>.</p>
       <div class="row mt20"><button class="btn btn-primary" onclick="showScreen('home')">Volver al inicio</button></div>
     </div>
   </section>
@@ -170,13 +185,301 @@ textarea{width:100%;background:#0d1524;border:1px solid var(--line);color:var(--
 
 </div>
 
+<!-- MODAL SIMULACIÓN -->
+<div id="simulationModal" class="simulation-modal" aria-hidden="true">
+  <div class="simulation-box">
+    <button class="sim-close-btn" onclick="closeSimulationModal()">×</button>
+
+    <div id="simModeSelect" class="sim-section active">
+      <h3>Simulación de check-in</h3>
+      <p style="color:var(--muted);margin-bottom:16px">Elige cómo quieres probar el flujo:</p>
+      <button class="btn btn-primary" onclick="startDemoSimulation()">Ver demostración</button>
+      <button class="btn btn-ghost" onclick="selectSimulationMode('self')">Yo lo hago</button>
+      <p class="sim-legal" style="margin-top:16px">Puedes ver cómo sería o responder tú mismo a las preguntas dentro del simulador.</p>
+    </div>
+
+    <div id="simDemo" class="sim-section">
+      <div class="sim-step active">
+        <h3>🔔 Simulación PULSSO</h3>
+        <p><strong>Usuario: Andrea</strong></p>
+        <p><span class="sim-badge">Sin actividad hace 4 días</span></p>
+        <p style="margin-top:12px;color:var(--muted)">PULSSO detecta inactividad y envía una notificación privada en tu celular.</p>
+        <button class="btn btn-primary" onclick="nextDemoStep(1)" style="margin-top:16px">Ver notificación</button>
+      </div>
+
+      <div class="sim-step">
+        <h3>¿Cómo estás?</h3>
+        <p style="color:var(--muted);font-size:13px">Oye, te notamos más callado estos días. ¿Cómo andas?</p>
+        <p style="font-size:12px;color:var(--muted);margin-top:12px">Tu respuesta es 100% privada, solo la ves tú.</p>
+        <button class="btn btn-primary" onclick="nextDemoStep(2)" style="margin-top:12px">Estoy bien, gracias</button>
+        <button class="btn btn-ghost" onclick="nextDemoStep(3)">Me serviría apoyo</button>
+      </div>
+
+      <div class="sim-step">
+        <h3 style="color:var(--ok)">✅ Perfecto</h3>
+        <p>No avisaremos a nadie. Cuídate y avísanos si nos necesitas.</p>
+        <button class="btn btn-primary" onclick="closeSimulationModal()" style="margin-top:16px">Entendido</button>
+      </div>
+
+      <div class="sim-step">
+        <h3>Avisar a contacto</h3>
+        <p style="color:var(--muted);font-size:13px">¿Autorizas que le preguntemos a <strong>Mamá</strong> si puede apañarte?</p>
+        <p style="font-size:12px;color:var(--muted);margin-top:12px">Ella verá un mensaje privado. Si dice que no, no se avisará a nadie más.</p>
+        <button class="btn btn-ok" onclick="nextDemoStep(4)" style="margin-top:12px">SÍ, AVISAR</button>
+        <button class="btn btn-ghost" onclick="closeSimulationModal()">NO, GRACIAS</button>
+      </div>
+
+      <div class="sim-step">
+        <h3 style="color:var(--ok)">✅ Listo</h3>
+        <p><strong>Se le enviará a Mamá:</strong></p>
+        <p style="background:rgba(59,130,246,.1);padding:12px;border-radius:8px;font-size:13px;margin:12px 0;border-left:3px solid var(--brand)">"Hola, Andrea anda bajoneada estos días. ¿Podrías hablarle? No está sola."</p>
+        <p style="color:var(--muted);font-size:12px">Si ella responde, se activa el círculo de apoyo. Si no responde en 24h, tú decides si avisar a alguien más.</p>
+        <button class="btn btn-primary" onclick="closeSimulationModal()" style="margin-top:16px">Entendido</button>
+      </div>
+    </div>
+
+    <div id="simSelf" class="sim-section">
+      <div id="selfStep1" class="sim-step active">
+        <h3>Chequeo privado</h3>
+        <p style="color:var(--muted);font-size:13px">Responde tú mismo al check-in.</p>
+        <div class="list mt16">
+          <div class="opt"><input type="radio" name="selfEstado" id="self-e1" value="e1"><label for="self-e1">Estoy bien, gracias <small>No avisamos a nadie</small></label></div>
+          <div class="opt"><input type="radio" name="selfEstado" id="self-e2" value="e2"><label for="self-e2">Más o menos <small>Podemos dejarlo en pausa 48h</small></label></div>
+          <div class="opt"><input type="radio" name="selfEstado" id="self-e3" value="e3"><label for="self-e3">Me serviría apoyo <small>Elegiré a quién avisar</small></label></div>
+        </div>
+        <button class="btn btn-primary" onclick="submitSelfStatus()" style="margin-top:16px">Continuar</button>
+      </div>
+
+      <div id="selfStep2" class="sim-step">
+        <h3>Perfecto</h3>
+        <p id="selfResultText" style="color:var(--muted);font-size:14px"></p>
+        <button class="btn btn-primary" onclick="closeSimulationModal()" style="margin-top:16px">Cerrar</button>
+      </div>
+
+      <div id="selfStep3" class="sim-step">
+        <h3>Elige a quién avisar</h3>
+        <div class="list mt16">
+          <div class="opt"><input type="radio" name="selfContact" id="self-c-mama" data-name="Mamá"><label for="self-c-mama">Mamá</label></div>
+          <div class="opt"><input type="radio" name="selfContact" id="self-c-papa" data-name="Papá"><label for="self-c-papa">Papá</label></div>
+          <div class="opt"><input type="radio" name="selfContact" id="self-c-pareja" data-name="Pareja"><label for="self-c-pareja">Pareja</label></div>
+          <div class="opt"><input type="radio" name="selfContact" id="self-c-amigo" data-name="Amigo/a"><label for="self-c-amigo">Amigo/a</label></div>
+        </div>
+        <button class="btn btn-ok" onclick="sendSelfSupport()" style="margin-top:16px">Enviar solicitud</button>
+      </div>
+
+      <div id="selfStep4" class="sim-step">
+        <h3 style="color:var(--ok)">✅ Solicitud enviada</h3>
+        <p id="selfConfirmText" style="color:var(--muted);font-size:14px"></p>
+        <p id="selfWhatsappText" style="color:var(--muted);font-size:14px;margin-top:12px;background:rgba(59,130,246,.1);padding:12px;border-radius:10px;border-left:3px solid var(--brand);"></p>
+        <div class="row mt16"><button class="btn btn-primary" onclick="openWhatsAppMessage(selfSupportMessage)">Enviar por WhatsApp</button><button class="btn btn-ghost" onclick="closeSimulationModal()">Cerrar</button></div>
+      </div>
+    </div>
+
+    <div class="sim-legal">
+      <strong>⚠️ Nota legal:</strong> Esta es una simulación demostrativa. PULSSO no es un servicio de salud, no diagnostica ni reemplaza atención profesional. Si hay riesgo inmediato: llama <a class="link" href="tel:*4141" onclick="return callEmergency('*4141','*4141')">*4141</a> o <a class="link" href="tel:6003607777" onclick="return callEmergency('6003607777','600 360 7777')">600 360 7777</a>.
+    </div>
+  </div>
+</div>
+
 <!-- MODALES -->
 <div id="modal" class="modal"><div class="box"><h3 id="modalTitle">Legal</h3><div id="modalBody" class="muted mt12" style="max-height:50vh;overflow:auto"></div><div class="row mt20"><button class="btn btn-primary" onclick="closeModal()">Cerrar</button></div></div></div>
 
 <script>
 let edadSel = null;
+let currentSimStep = 0;
+let selfSupportContact = '';
+let selfSupportMessage = '';
+
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+
 function selEdad(btn){edadSel = btn.textContent;document.querySelectorAll('#encuesta .btn-ghost').forEach(b=>b.style.borderColor='var(--line)');btn.style.borderColor='var(--brand)'}
+
+let demoAuto = false;
+let demoTimeouts = [];
+
+function openSimulationModal(){
+  document.getElementById('simulationModal').classList.add('active');
+  document.getElementById('simModeSelect').classList.add('active');
+  document.getElementById('simDemo').classList.remove('active');
+  document.getElementById('simSelf').classList.remove('active');
+  resetDemo();
+  resetSelf();
+  stopDemoSequence();
+  window.scrollTo(0,0);
+}
+
+function closeSimulationModal(){
+  document.getElementById('simulationModal').classList.remove('active');
+  stopDemoSequence();
+}
+
+function selectSimulationMode(mode){
+  document.querySelectorAll('#simulationModal .sim-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('simModeSelect').classList.remove('active');
+  if(mode === 'demo'){
+    document.getElementById('simDemo').classList.add('active');
+    resetDemo();
+  } else {
+    document.getElementById('simSelf').classList.add('active');
+    resetSelf();
+  }
+}
+
+function nextDemoStep(step){
+  const steps = document.querySelectorAll('#simDemo .sim-step');
+  steps.forEach(s=>s.classList.remove('active'));
+  const target = steps[step];
+  if(target){
+    steps[0].parentElement.classList.add('demo-auto');
+    target.classList.add('active');
+  }
+}
+
+function highlightDemoOption(index){
+  const buttons = Array.from(document.querySelectorAll('#simDemo .sim-step:nth-of-type(2) .btn'));
+  buttons.forEach((btn,i)=>{
+    btn.classList.toggle('demo-highlight', i === index);
+  });
+}
+
+function setDemoHighlight(selector){
+  clearDemoHighlights();
+  const btn = document.querySelector(selector);
+  if(btn) btn.classList.add('demo-highlight');
+}
+
+function clearDemoHighlights(){
+  document.querySelectorAll('#simDemo .sim-step .btn').forEach(btn => btn.classList.remove('demo-highlight'));
+}
+
+function startDemoSimulation(){
+  stopDemoSequence();
+  selectSimulationMode('demo');
+  demoAuto = true;
+  resetDemo();
+  document.getElementById('simDemo').classList.add('demo-auto');
+  setDemoHighlight('#simDemo .sim-step:nth-of-type(1) .btn.btn-primary');
+
+  demoTimeouts.push(setTimeout(()=>{
+    if(!demoAuto) return;
+    nextDemoStep(1);
+    setDemoHighlight('#simDemo .sim-step:nth-of-type(2) .btn.btn-ghost');
+  }, 3600));
+
+  demoTimeouts.push(setTimeout(()=>{
+    if(!demoAuto) return;
+    nextDemoStep(3);
+    setDemoHighlight('#simDemo .sim-step:nth-of-type(4) .btn.btn-ok');
+  }, 7600));
+
+  demoTimeouts.push(setTimeout(()=>{
+    if(!demoAuto) return;
+    clearDemoHighlights();
+    nextDemoStep(4);
+  }, 10600));
+
+  demoTimeouts.push(setTimeout(()=>{
+    if(!demoAuto) return;
+    document.getElementById('simDemo').classList.remove('demo-auto');
+    clearDemoHighlights();
+    demoAuto = false;
+  }, 10600));
+}
+
+function stopDemoSequence(){
+  demoAuto = false;
+  demoTimeouts.forEach(t => clearTimeout(t));
+  demoTimeouts = [];
+  clearDemoHighlights();
+  document.getElementById('simDemo')?.classList.remove('demo-auto');
+}
+
+function resetDemo(){
+  const steps = document.querySelectorAll('#simDemo .sim-step');
+  steps.forEach(s=>s.classList.remove('active'));
+  steps[0]?.classList.add('active');
+}
+
+function showSelfStep(step){
+  const steps = document.querySelectorAll('#simSelf .sim-step');
+  steps.forEach(s=>s.classList.remove('active'));
+  if(steps[step]) steps[step].classList.add('active');
+}
+
+function resetSelf(){
+  document.querySelectorAll('#simSelf input[name="selfEstado"]').forEach(i=>i.checked=false);
+  document.querySelectorAll('#simSelf input[name="selfContact"]').forEach(i=>i.checked=false);
+  document.getElementById('selfResultText').textContent = '';
+  document.getElementById('selfConfirmText').textContent = '';
+  document.getElementById('selfWhatsappText').textContent = '';
+  selfSupportContact = '';
+  selfSupportMessage = '';
+  showSelfStep(0);
+}
+
+function submitSelfStatus(){
+  const selected = document.querySelector('#simSelf input[name="selfEstado"]:checked');
+  if(!selected){
+    alert('Elige una opción para continuar');
+    return;
+  }
+  if(selected.value === 'e1'){
+    document.getElementById('selfResultText').textContent = 'Perfecto. No avisaremos a nadie. Cuídate y avísanos si nos necesitas.';
+    showSelfStep(1);
+  } else if(selected.value === 'e2'){
+    document.getElementById('selfResultText').textContent = 'Lo dejamos en pausa 48h. Si necesitas ayuda, puedes volver cuando quieras.';
+    showSelfStep(1);
+  } else {
+    showSelfStep(2);
+  }
+}
+
+function sendSelfSupport(openWhatsApp = false){
+  const contact = document.querySelector('#simSelf input[name="selfContact"]:checked');
+  if(!contact){
+    alert('Elige un contacto para continuar');
+    return;
+  }
+  const contactName = contact.nextElementSibling ? contact.nextElementSibling.textContent.trim() : contact.getAttribute('data-name');
+  selfSupportContact = contactName;
+  selfSupportMessage = `Hola ${contactName}, quería contarte que me he sentido un poco bajoneado/a estos días. ¿Podrías escribirme para ver cómo estoy? Gracias.`;
+  document.getElementById('selfConfirmText').textContent = `Se notificará a ${contactName}. Si responde, podrás seguir con el apoyo.`;
+  document.getElementById('selfWhatsappText').textContent = selfSupportMessage;
+  showSelfStep(3);
+  if(openWhatsApp){
+    openWhatsAppMessage(selfSupportMessage);
+  }
+}
+
+function openWhatsAppMessage(message){
+  const texto = encodeURIComponent(message);
+  const whatsappUrl = `https://wa.me/?text=${texto}`;
+  window.open(whatsappUrl, '_blank');
+}
+
+function callEmergency(number, label){
+  const telUrl = `tel:${number}`;
+  const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  if(mobile){
+    window.location.href = telUrl;
+  } else {
+    alert(`Llama al número ${label || number} desde tu teléfono.`);
+  }
+  return false;
+}
+
+// Cerrar modal al hacer click fuera
+document.getElementById('simulationModal')?.addEventListener('click', function(e) {
+  if(e.target.id === 'simulationModal') closeSimulationModal();
+});
+
+// Cerrar modal con tecla Escape
+document.addEventListener('keydown', function(e) {
+  if(e.key === 'Escape' && document.getElementById('simulationModal').classList.contains('active')) {
+    closeSimulationModal();
+  }
+});
+
 function decidirCheckin(){
   const e1 = document.getElementById('e1').checked;
   const e2 = document.getElementById('e2').checked;
@@ -247,111 +550,6 @@ function showModal(tipo){
 function closeModal(){document.getElementById('modal').style.display='none'}
 
 </script>
-
-<!-- BOTÓN + TEXTO LEGAL CORTO -->
-  <button class="pulsso-sim-btn" onclick="abrirSimuladorPULSSO()">  
-  🎬   VER SIMULACIÓN: ¿Cómo actúa PULSSO?
-  </button>
-<p class="pulsso-legal-chico">
-*Simulación demostrativa. No ejecuta acciones reales. PULSSO no es salud. Crisis: *4141
-</p>
-
-<!-- MODAL SIMULADOR -->
-<div id="pulssoModal" class="pulsso-modal" onclick="cerrarSiClickFuera(event)" role="dialog" aria-modal="true" aria-label="Simulación PULSSO">
-  <div class="pulsso-sim-card" id="pulssoSimCard" tabindex="-1">
-    <button class="pulsso-cerrar" onclick="cerrarSimuladorPULSSO()" aria-label="Cerrar simulador">&times;</button>
-    
-    <!-- PASO 0: DETECCIÓN -->
-    <div id="pulssoPaso0" class="paso activo">
-      <h3>Simulación PULSSO</h3>
-      <p><b>Usuario: Andrea</b></p>
-      <p><span class="pulsso-badge-rojo">Sin conexión hace 4 días</span></p>
-      <p style="margin-top:20px;">PULSSO detecta inactividad y envía una notificación privada.</p>
-      <button onclick="siguientePaso(1)">Ver notificación</button>
-    </div>
-
-    <!-- PASO 1: PREGUNTA 1 -->
-    <div id="pulssoPaso1" class="paso">
-      <h3>PULSSO</h3>
-      <p>Hola Andrea, ¿estás bien?<br>No sabemos de ti hace 4 días.</p>
-      <p style="font-size:12px; color:#666;">Tu respuesta es privada</p>
-      <button onclick="siguientePaso(2)">Sí, estoy bien</button>
-      <button onclick="siguientePaso(2)">No, necesito apoyo</button>
-    </div>
-
-    <!-- PASO 2: PREGUNTA 2 DOBLE CONSENTIMIENTO -->
-    <div id="pulssoPaso2" class="paso">
-      <h3>PULSSO</h3>
-      <p>¿Autorizas que avisemos a tu contacto de confianza "Mamá"?</p>
-      <button onclick="siguientePaso(3)">SÍ, AVISAR</button>
-      <button class="btn-no" onclick="siguientePaso(4)">NO, GRACIAS</button>
-    </div>
-
-    <!-- PASO 3: DOBLE SÍ -->
-    <div id="pulssoPaso3" class="paso">
-      <h3 style="color:#2E7D32;">✅ Listo</h3>
-      <p>Le preguntaremos a Mamá si acepta hablar contigo.</p>
-      <p><b>Solo si ella dice SÍ, se abre el canal de apoyo.</b></p>
-      <button onclick="cerrarSimuladorPULSSO()">Entendido</button>
-    </div>
-
-    <!-- PASO 4: USUARIO DIJO NO -->
-    <div id="pulssoPaso4" class="paso">
-      <h3>Entendido</h3>
-      <p>No se enviará ningún aviso. PULSSO respeta tu decisión.</p>
-      <p>Estaremos aquí si nos necesitas.</p>
-      <button onclick="cerrarSimuladorPULSSO()">Cerrar</button>
-    </div>
-
-    <!-- TEXTO LEGAL OBLIGATORIO -->
-    <p style="font-size:11px; color:#666; margin-top:25px; border-top:1px solid #ddd; padding-top:15px; text-align:left;">
-    *Simulación con fines demostrativos. PULSSO no es un servicio de salud, no diagnostica ni reemplaza atención profesional. En crisis llama a *4141 Línea de Prevención del Suicidio o 600 360 7777 Salud Responde.
-    </p>
-  </div>
-</div>
-
-<script>
-function abrirSimuladorPULSSO() {
-  const modal = document.getElementById('pulssoModal');
-  modal.style.display = 'flex';
-  modal.setAttribute('aria-hidden', 'false');
-  reiniciarSimulador();
-  const card = document.getElementById('pulssoSimCard');
-  card?.focus();
-}
-function cerrarSimuladorPULSSO() {
-  const modal = document.getElementById('pulssoModal');
-  modal.style.display = 'none';
-  modal.setAttribute('aria-hidden', 'true');
-}
-function cerrarSiClickFuera(e) {
-  if (e.target.id === 'pulssoModal') cerrarSimuladorPULSSO();
-}
-function siguientePaso(num) {
-  document.querySelectorAll('.pulsso-sim-card .paso').forEach(p => p.classList.remove('activo'));
-  document.getElementById('pulssoPaso' + num).classList.add('activo');
-}
-function reiniciarSimulador() {
-  siguientePaso(0);
-}
-function handleSimuladorKeydown(event) {
-  const modal = document.getElementById('pulssoModal');
-  if (!modal || modal.style.display !== 'flex') return;
-  if (event.key === 'Escape') {
-    cerrarSimuladorPULSSO();
-  }
-}
-document.addEventListener('keydown', handleSimuladorKeydown);
-</script>
-
-<!-- FIN SIMULADOR PULSSO -->
-
-<!-- FOOTER LEGAL COMPLETO - PEGAR ANTES DE </body> -->
-<footer style="background:#f5f5f5; padding:20px; margin-top:40px; font-size:12px; color:#555; font-family:Arial;">
-  <p><b>PULSSO</b> - Protocolo de activación de redes de apoyo.</p>
-  <p>SIMULACIÓN: Este entorno no ejecuta acciones reales ni contacta a personas. PULSSO no constituye prestación de salud según Ley 20.584, no realiza diagnósticos ni tratamientos. El uso real requiere doble consentimiento expreso conforme a Ley 19.628. Ante riesgo vital contacte *4141 Línea de Prevención del Suicidio MINSAL, 600 360 7777 Salud Responde, o acuda a urgencias.</p>
-</footer>
-
 
 </body>
 </html>
