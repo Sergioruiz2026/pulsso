@@ -119,7 +119,7 @@ textarea{width:100%;background:#0d1524;border:1px solid var(--line);color:var(--
   <section id="gente" class="screen">
   <div class="card">
     <h2>Arma tu círculo de confianza</h2>
-    <p class="muted">Elige a quién avisamos primero. Si no responde en 24h, te preguntaremos si avisar al siguiente.</p>
+    <p class="muted">Elige a quién avisamos primero. Si no responde en 6h, te preguntaremos si enviar otro mensaje a un respaldo.</p>
     
     <div class="list mt16">
       <div class="opt"><input type="radio" name="principal" id="p-mama" checked><label for="p-mama"><strong>Contacto Principal:</strong> Mamá</label></div>
@@ -138,7 +138,7 @@ textarea{width:100%;background:#0d1524;border:1px solid var(--line);color:var(--
     </div>
 
     <div class="row mt20"><button class="btn btn-ghost" onclick="showScreen('checkin')">Atrás</button><button class="btn btn-primary" onclick="showScreen('mensaje')">Siguiente</button></div>
-    <div class="notice">Solo contactaremos a 1 persona a la vez. Si no hay respuesta en 24h, te preguntaremos antes de pasar al siguiente. Nunca enviamos en masa.</div>
+    <div class="notice">Solo contactaremos a 1 persona a la vez. Si no hay respuesta en 6h, te preguntaremos si enviar otro mensaje a otro contacto. Si ese contacto no contesta en 3h, avisaremos a todos tus contactos de apoyo.</div>
   </div>
 </section>
 
@@ -164,8 +164,9 @@ textarea{width:100%;background:#0d1524;border:1px solid var(--line);color:var(--
     <div class="card center">
       <h2>Listo ✅</h2>
       <p class="muted">Se abrió WhatsApp con el mensaje. Cuando lo envíes, tu gente sabrá cómo apañarte.</p>
+      <div id="followupState" class="notice" style="margin-top:16px">Estado del seguimiento: No se ha enviado ningún mensaje todavía.</div>
       <p class="muted mt16">Recuerda: PULSSO no es terapia. Si necesitas hablar ahora: <a class="link" href="tel:*4141" onclick="return callEmergency('*4141','*4141')">*4141</a> o <a class="link" href="tel:6003607777" onclick="return callEmergency('6003607777','600 360 7777')">600 360 7777</a>.</p>
-      <div class="row mt20"><button class="btn btn-primary" onclick="showScreen('home')">Volver al inicio</button></div>
+      <div class="row mt20"><button class="btn btn-primary" onclick="showScreen('home')">Volver al inicio</button><button class="btn btn-ghost" onclick="checkResponseStatus()">Revisar respuesta</button></div>
     </div>
   </section>
 
@@ -233,7 +234,7 @@ textarea{width:100%;background:#0d1524;border:1px solid var(--line);color:var(--
         <h3 style="color:var(--ok)">✅ Listo</h3>
         <p><strong>Se le enviará a Mamá:</strong></p>
         <p style="background:rgba(59,130,246,.1);padding:12px;border-radius:8px;font-size:13px;margin:12px 0;border-left:3px solid var(--brand)">"Hola, Andrea anda bajoneada estos días. ¿Podrías hablarle? No está sola."</p>
-        <p style="color:var(--muted);font-size:12px">Si ella responde, se activa el círculo de apoyo. Si no responde en 24h, tú decides si avisar a alguien más.</p>
+        <p style="color:var(--muted);font-size:12px">Si ella responde, se activa el círculo de apoyo. Si no responde en 6h, la app te dará la opción de avisar a otro contacto. Si ese contacto tampoco responde en 3h, podrá avisar a todos tus contactos de apoyo.</p>
         <button class="btn btn-primary" onclick="closeSimulationModal()" style="margin-top:16px">Entendido</button>
       </div>
     </div>
@@ -290,7 +291,7 @@ let currentSimStep = 0;
 let selfSupportContact = '';
 let selfSupportMessage = '';
 
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);if(id==='confirmado') renderFollowupStatus();}
 
 function selEdad(btn){edadSel = btn.textContent;document.querySelectorAll('#encuesta .btn-ghost').forEach(b=>b.style.borderColor='var(--line)');btn.style.borderColor='var(--brand)'}
 
@@ -518,13 +519,115 @@ function enviarPorWhatsApp(){
   const whatsappUrl = `https://wa.me/?text=${texto}`;
   window.open(whatsappUrl, '_blank');
   
-  // 5. Para demo CREA: simular que guardamos respaldos
+  // 5. Para demo CREA: simular que guardamos respaldos y plazos de seguimiento
+  saveFollowupState(principal, respaldos);
   if(respaldos.length > 0){
-    localStorage.setItem('pulsso_respaldos', JSON.stringify(respaldos));
-    alert('Se abrió WhatsApp para ' + principal + '. Si no responde en 24h, la app real te preguntaría si avisar a: ' + respaldos.join(', '));
+    alert('Se abrió WhatsApp para ' + principal + '. Si no responde en 6h, te preguntaremos si enviar otro mensaje a un respaldo. Si ese respaldo no contesta en 3h, avisaremos a todos tus contactos.');
+  } else {
+    alert('Se abrió WhatsApp para ' + principal + '. Si no responde en 6h, podrás enviar un mensaje a otro contacto de apoyo.');
   }
   
   showScreen('confirmado');
+  renderFollowupStatus();
+}
+
+function saveFollowupState(principal, respaldos){
+  const state = {
+    primary: principal,
+    backups: respaldos,
+    sentPrimary: Date.now(),
+    stage: 'sentPrimary',
+    backupIndex: 0,
+    backupSent: null
+  };
+  localStorage.setItem('pulsso_followup', JSON.stringify(state));
+}
+
+function renderFollowupStatus(){
+  const el = document.getElementById('followupState');
+  if(!el) return;
+  const stored = localStorage.getItem('pulsso_followup');
+  if(!stored){
+    el.textContent = 'Estado del seguimiento: No se ha enviado ningún mensaje todavía.';
+    return;
+  }
+  const state = JSON.parse(stored);
+  if(state.stage === 'sentPrimary'){
+    el.textContent = `Estado del seguimiento: Mensaje enviado a ${state.primary}. Si no responde en 6h, podrás enviar otro mensaje a un respaldo.`;
+    return;
+  }
+  if(state.stage === 'sentBackup'){
+    const backup = state.backups[state.backupIndex - 1] || state.backups[0] || 'el respaldo';
+    el.textContent = `Estado del seguimiento: Mensaje de respaldo enviado a ${backup}. Si no responde en 3h, podrás avisar a todos tus contactos de apoyo.`;
+    return;
+  }
+  if(state.stage === 'sentAll'){
+    el.textContent = 'Estado del seguimiento: Se envió un mensaje a todos tus contactos de apoyo.';
+    return;
+  }
+  el.textContent = 'Estado del seguimiento: Seguimiento en proceso.';
+}
+
+function checkResponseStatus(){
+  const stored = localStorage.getItem('pulsso_followup');
+  if(!stored){
+    alert('No hay seguimiento activo para revisar.');
+    return;
+  }
+  const state = JSON.parse(stored);
+  const now = Date.now();
+  if(state.stage === 'sentPrimary'){
+    const waitEnd = state.sentPrimary + 6 * 60 * 60 * 1000;
+    if(now < waitEnd){
+      alert('Aún no han pasado 6 horas desde el primer envío. Revisa más tarde.');
+      return;
+    }
+    if(state.backups.length === 0){
+      if(confirm('No hay otro contacto de respaldo. ¿Enviar ahora un mensaje de apoyo a todos tus contactos?')){
+        sendSupportToAllContacts(state);
+      }
+      return;
+    }
+    const nextContact = state.backups[state.backupIndex] || state.backups[0];
+    if(confirm(`No hubo respuesta al primer mensaje en 6 horas. ¿Enviar ahora otro mensaje a ${nextContact}?`)){
+      sendFollowupToBackup(nextContact, state);
+    }
+    return;
+  }
+  if(state.stage === 'sentBackup'){
+    const waitEnd = state.backupSent + 3 * 60 * 60 * 1000;
+    if(now < waitEnd){
+      alert('Aún no han pasado 3 horas desde el mensaje al respaldo. Revisa más tarde.');
+      return;
+    }
+    if(confirm('No hubo respuesta al respaldo en 3 horas. ¿Enviar ahora un mensaje a todos tus contactos de apoyo?')){
+      sendSupportToAllContacts(state);
+    }
+    return;
+  }
+  if(state.stage === 'sentAll'){
+    alert('Ya se envió el mensaje a todos tus contactos de apoyo.');
+    return;
+  }
+}
+
+function sendFollowupToBackup(contactName, state){
+  const message = `Hola ${contactName}, Andrea no respondió al primer mensaje y me preocupa. ¿Podrías escribirle para ver cómo está o invitarle a hacer algo? Gracias.`;
+  state.stage = 'sentBackup';
+  state.backupSent = Date.now();
+  state.backupIndex = Math.min(state.backupIndex + 1, state.backups.length - 1);
+  localStorage.setItem('pulsso_followup', JSON.stringify(state));
+  openWhatsAppMessage(message);
+  renderFollowupStatus();
+}
+
+function sendSupportToAllContacts(state){
+  const message = `Hola, Andrea ha seguido sin respuesta y me preocupa. ¿Pueden escribirle un mensaje de apoyo o invitarle a hacer algo juntos? Gracias.`;
+  state.stage = 'sentAll';
+  state.allSent = Date.now();
+  localStorage.setItem('pulsso_followup', JSON.stringify(state));
+  openWhatsAppMessage(message);
+  renderFollowupStatus();
 }
 
 function showModal(tipo){
