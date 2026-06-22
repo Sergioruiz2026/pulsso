@@ -36,7 +36,9 @@ textarea{width:100%;background:#0d1524;border:1px solid var(--line);color:var(--
   <section id="bienvenida" class="screen active">
     <div class="center">
       <div class="logo">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M12 21s-6-4.35-9-8.5C1 9 3 5 7 5c2.5 0 3.5 1.5 5 3 1.5-1.5 2.5-3 5-3 4 0 6 4 7.5C18 16.65 12 21 12 21z" fill="#0b1320" opacity=".9"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="10" fill="#0b1320" opacity="0.9" />
+        </svg>
       </div>
       <h1>PULSSO</h1>
       <div class="tag">Apoyo entre amigos, sin vigilar</div>
@@ -65,19 +67,12 @@ textarea{width:100%;background:#0d1524;border:1px solid var(--line);color:var(--
       <h2>Antes de partir</h2>
       <p class="muted">Esto nos ayuda a que PULSSO hable tu idioma. Solo tú ves esto.</p>
       <div class="mt16">
-        <label class="muted">¿Qué edad tienes?</label>
-        <div class="row mt8"><button class="btn btn-ghost" onclick="selEdad(this)">13–17</button><button class="btn btn-ghost" onclick="selEdad(this)">18–24</button></div>
-        <div class="row mt8"><button class="btn btn-ghost" onclick="selEdad(this)">25–34</button><button class="btn btn-ghost" onclick="selEdad(this)">35+</button></div>
-      </div>
-      <div class="mt16">
-        <label class="muted">Si un día andas bajón, ¿qué te serviría más?</label>
         <div class="list mt8">
           <div class="opt"><input type="radio" name="estilo" id="est1"><label for="est1">Que me hablen piola, sin sermón <small>“Oye, ¿un café?”</small></label></div>
           <div class="opt"><input type="radio" name="estilo" id="est2"><label for="est2">Que me inviten a hacer algo <small>“Vamos a caminar”</small></label></div>
           <div class="opt"><input type="radio" name="estilo" id="est3"><label for="est3">Que me recuerden que importo <small>“Te quiero, cuentas conmigo”</small></label></div>
         </div>
-      <div class="row mt20"><button class="btn btn-ghost" onclick="showScreen('bienvenida')">Atrás</button><button class="btn btn-primary" onclick="showScreen('home')">Listo</button></div>
-    </div>
+      <div class="row mt20"><button class="btn btn-ghost" onclick="showScreen('bienvenida')">Atrás</button><button class="btn btn-primary" onclick="showScreen('home')">Listo</button></div>      </div>    </div>
   </section>
 
   <!-- HOME -->
@@ -181,7 +176,7 @@ textarea{width:100%;background:#0d1524;border:1px solid var(--line);color:var(--
 <script>
 let edadSel = null;
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
-function selEdad(btn){edadSel = btn.textContent;document.querySelectorAll('#encuesta.btn-ghost').forEach(b=>b.style.borderColor='var(--line)');btn.style.borderColor='var(--brand)'}
+function selEdad(btn){edadSel = btn.textContent;document.querySelectorAll('#encuesta .btn-ghost').forEach(b=>b.style.borderColor='var(--line)');btn.style.borderColor='var(--brand)'}
 function decidirCheckin(){
   const e1 = document.getElementById('e1').checked;
   const e2 = document.getElementById('e2').checked;
@@ -250,6 +245,113 @@ function showModal(tipo){
   document.getElementById('modal').style.display='flex';
 }
 function closeModal(){document.getElementById('modal').style.display='none'}
+
 </script>
+
+<!-- BOTÓN + TEXTO LEGAL CORTO -->
+  <button class="pulsso-sim-btn" onclick="abrirSimuladorPULSSO()">  
+  🎬   VER SIMULACIÓN: ¿Cómo actúa PULSSO?
+  </button>
+<p class="pulsso-legal-chico">
+*Simulación demostrativa. No ejecuta acciones reales. PULSSO no es salud. Crisis: *4141
+</p>
+
+<!-- MODAL SIMULADOR -->
+<div id="pulssoModal" class="pulsso-modal" onclick="cerrarSiClickFuera(event)" role="dialog" aria-modal="true" aria-label="Simulación PULSSO">
+  <div class="pulsso-sim-card" id="pulssoSimCard" tabindex="-1">
+    <button class="pulsso-cerrar" onclick="cerrarSimuladorPULSSO()" aria-label="Cerrar simulador">&times;</button>
+    
+    <!-- PASO 0: DETECCIÓN -->
+    <div id="pulssoPaso0" class="paso activo">
+      <h3>Simulación PULSSO</h3>
+      <p><b>Usuario: Andrea</b></p>
+      <p><span class="pulsso-badge-rojo">Sin conexión hace 4 días</span></p>
+      <p style="margin-top:20px;">PULSSO detecta inactividad y envía una notificación privada.</p>
+      <button onclick="siguientePaso(1)">Ver notificación</button>
+    </div>
+
+    <!-- PASO 1: PREGUNTA 1 -->
+    <div id="pulssoPaso1" class="paso">
+      <h3>PULSSO</h3>
+      <p>Hola Andrea, ¿estás bien?<br>No sabemos de ti hace 4 días.</p>
+      <p style="font-size:12px; color:#666;">Tu respuesta es privada</p>
+      <button onclick="siguientePaso(2)">Sí, estoy bien</button>
+      <button onclick="siguientePaso(2)">No, necesito apoyo</button>
+    </div>
+
+    <!-- PASO 2: PREGUNTA 2 DOBLE CONSENTIMIENTO -->
+    <div id="pulssoPaso2" class="paso">
+      <h3>PULSSO</h3>
+      <p>¿Autorizas que avisemos a tu contacto de confianza "Mamá"?</p>
+      <button onclick="siguientePaso(3)">SÍ, AVISAR</button>
+      <button class="btn-no" onclick="siguientePaso(4)">NO, GRACIAS</button>
+    </div>
+
+    <!-- PASO 3: DOBLE SÍ -->
+    <div id="pulssoPaso3" class="paso">
+      <h3 style="color:#2E7D32;">✅ Listo</h3>
+      <p>Le preguntaremos a Mamá si acepta hablar contigo.</p>
+      <p><b>Solo si ella dice SÍ, se abre el canal de apoyo.</b></p>
+      <button onclick="cerrarSimuladorPULSSO()">Entendido</button>
+    </div>
+
+    <!-- PASO 4: USUARIO DIJO NO -->
+    <div id="pulssoPaso4" class="paso">
+      <h3>Entendido</h3>
+      <p>No se enviará ningún aviso. PULSSO respeta tu decisión.</p>
+      <p>Estaremos aquí si nos necesitas.</p>
+      <button onclick="cerrarSimuladorPULSSO()">Cerrar</button>
+    </div>
+
+    <!-- TEXTO LEGAL OBLIGATORIO -->
+    <p style="font-size:11px; color:#666; margin-top:25px; border-top:1px solid #ddd; padding-top:15px; text-align:left;">
+    *Simulación con fines demostrativos. PULSSO no es un servicio de salud, no diagnostica ni reemplaza atención profesional. En crisis llama a *4141 Línea de Prevención del Suicidio o 600 360 7777 Salud Responde.
+    </p>
+  </div>
+</div>
+
+<script>
+function abrirSimuladorPULSSO() {
+  const modal = document.getElementById('pulssoModal');
+  modal.style.display = 'flex';
+  modal.setAttribute('aria-hidden', 'false');
+  reiniciarSimulador();
+  const card = document.getElementById('pulssoSimCard');
+  card?.focus();
+}
+function cerrarSimuladorPULSSO() {
+  const modal = document.getElementById('pulssoModal');
+  modal.style.display = 'none';
+  modal.setAttribute('aria-hidden', 'true');
+}
+function cerrarSiClickFuera(e) {
+  if (e.target.id === 'pulssoModal') cerrarSimuladorPULSSO();
+}
+function siguientePaso(num) {
+  document.querySelectorAll('.pulsso-sim-card .paso').forEach(p => p.classList.remove('activo'));
+  document.getElementById('pulssoPaso' + num).classList.add('activo');
+}
+function reiniciarSimulador() {
+  siguientePaso(0);
+}
+function handleSimuladorKeydown(event) {
+  const modal = document.getElementById('pulssoModal');
+  if (!modal || modal.style.display !== 'flex') return;
+  if (event.key === 'Escape') {
+    cerrarSimuladorPULSSO();
+  }
+}
+document.addEventListener('keydown', handleSimuladorKeydown);
+</script>
+
+<!-- FIN SIMULADOR PULSSO -->
+
+<!-- FOOTER LEGAL COMPLETO - PEGAR ANTES DE </body> -->
+<footer style="background:#f5f5f5; padding:20px; margin-top:40px; font-size:12px; color:#555; font-family:Arial;">
+  <p><b>PULSSO</b> - Protocolo de activación de redes de apoyo.</p>
+  <p>SIMULACIÓN: Este entorno no ejecuta acciones reales ni contacta a personas. PULSSO no constituye prestación de salud según Ley 20.584, no realiza diagnósticos ni tratamientos. El uso real requiere doble consentimiento expreso conforme a Ley 19.628. Ante riesgo vital contacte *4141 Línea de Prevención del Suicidio MINSAL, 600 360 7777 Salud Responde, o acuda a urgencias.</p>
+</footer>
+
+
 </body>
 </html>
